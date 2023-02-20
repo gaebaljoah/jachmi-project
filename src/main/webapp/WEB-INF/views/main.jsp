@@ -146,7 +146,7 @@ footer {
 			</table>
 			</div>
 		</div> -->		
-
+	<span> hello world</span>
 		
 		<div id="imgs" style="margin-left: 20%; margin-bottom: 100px; margin-top: 30px;" >.
 		<!-- 1번 -->
