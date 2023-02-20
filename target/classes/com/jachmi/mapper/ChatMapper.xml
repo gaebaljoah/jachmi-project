@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper 
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.jachmi.mapper.ChatMapper">	
+
+ 	<select id="list" resultType="com.jachmi.domain.ChatVO">
+ 		select * from tbl_chat 
+ 		where chatid = (select chatid from member where id = #{id}) 
+ 	</select>
+ 	
+ 	<insert id="chat_insert">
+ 		insert into tbl_chat(chatid, sender, message, regdate, username)
+ 		values((select chatid from member where id = #{sender}), #{sender}, #{message},sysdate, #{sender})
+ 	</insert> 	
+ 	
+ 	<insert id="admin_insert">
+ 		insert into tbl_chat(chatid, sender, message, regdate, username)
+ 		values((select chatid from member where id = #{sender}), 'admin', #{message},sysdate, (select id from member where id = #{sender}))
+ 	</insert> 	
+ 	
+ 	<select id="chatList" resultType="com.jachmi.domain.ChatVO">
+ 		select chatid, sender, message, regdate, username  
+		from (
+		    select chatid, sender, message, regdate,username,
+		ROW_NUMBER() OVER (PARTITION BY chatid ORDER BY regdate DESC) AS rn
+		from tbl_chat) 
+		where rn = 1
+ 	</select>
+ 
+ 	<select id="admin_chat" resultType="com.jachmi.domain.ChatVO">
+ 		select * from tbl_chat 
+ 		where chatid = (select chatid from member where id = #{username})
+ 	</select>
+ 	 	
+</mapper>

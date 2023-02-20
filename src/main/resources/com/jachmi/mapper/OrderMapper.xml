@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.jachmi.mapper.OrderMapper">
+
+	<select id="getCartList" resultType="com.jachmi.domain.CartVO">
+		select * from cart where cart_idx = #{cart_idx}
+	</select>
+
+	<insert id="insertOrder">
+		INSERT INTO product_order
+		VALUES(
+		seq_order.nextval,
+		#{order_count},
+		#{order_price},
+		#{order_option},
+		#{order_p_name},
+		'입금확인중',
+		#{order_recv},
+		#{order_addr},
+		#{order_addr_detail},
+		#{order_tel},
+		#{order_email},
+		#{order_p_id},
+		#{order_m_id},
+		sysdate,
+		#{order_img}
+		)
+	</insert>
+
+	<select id="getOrderList"
+		resultType="com.jachmi.domain.ProductOrderVO">
+		SELECT * FROM product_order WHERE order_m_id = #{order_m_id}
+	</select>
+
+	<select id="allStatus" resultType="int">
+		SELECT count(*) FROM product_order where order_m_id =#{order_m_id}
+	</select>
+
+	<select id="status1" resultType="int">
+		SELECT count(*) FROM product_order where order_status='입금확인중' and order_m_id =#{order_m_id}
+	</select>
+
+	<select id="status2" resultType="int">
+		SELECT count(*) FROM product_order where order_status='배송중' and order_m_id =#{order_m_id}
+	</select>
+
+	<select id="status3" resultType="int">
+		SELECT count(*) FROM product_order where order_status='배송완료' and order_m_id =#{order_m_id}
+	</select>
+
+	<select id="getOrderOneList"
+		resultType="com.jachmi.domain.ProductOrderVO">
+		SELECT * FROM product_order WHERE order_date = #{order_date}
+	</select>
+	
+	<select id="getOrderInfo" resultType="com.jachmi.domain.ProductOrderVO">
+	
+	select 
+	order_status,order_addr,order_addr_detail,order_tel,order_email,order_recv,order_date,order_m_id
+	from 
+	product_order 
+	where 
+	order_date = #{order_date}
+	group by  
+	order_status,order_addr,order_addr_detail,order_tel,order_email,order_recv,order_date,order_m_id
+	</select>
+	
+	<delete id="removeList">
+	delete From product_order where order_date = #{order_date}
+	</delete>
+</mapper>

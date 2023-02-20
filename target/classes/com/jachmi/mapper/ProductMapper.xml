@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.jachmi.mapper.ProductMapper">
+	<!-- 상품등록 -->
+	<insert id="productInsert">
+		INSERT INTO product
+		VALUES(
+		seq_product.nextval,
+		#{product_name},
+		#{product_price},
+		sysdate,
+		#{product_desc},
+		#{product_option1},
+		#{product_option2},
+		#{product_option_price1},
+		#{product_option_price2},
+		#{product_img},
+		#{product_img_desc1},
+		#{product_img_desc2},
+		#{product_img_desc3},
+		#{product_category_idx}
+		)
+	</insert>
+	<!-- 상품리스트 보기 -->
+	<select id="getListWithPaging"
+		resultType="com.jachmi.domain.ShopProductVO">
+		<![CDATA[
+			select * from (select 
+            	  rownum rn, 
+            	  product_idx, 
+            	  product_name, 
+            	  product_price, 
+            	  product_regdate, 
+            	  product_desc, 
+            	  product_option1, 
+            	  product_option2,
+            	  product_option_price1,
+            	  product_option_price2,
+            	  product_img,
+            	  product_category_idx
+			      from product
+        		  where rownum <= #{pageNum} * #{amount})
+			where rn > (#{pageNum} - 1) * #{amount}
+		]]> 		
+	</select>
+	
+	<select id="getTotalCount" resultType="int">
+		select count(*) from
+		product
+	</select>
+	
+		<!-- 카테고리별 상품 리스트 보기 -->
+	<select id="get_list_by_category_with_paging" resultType="com.jachmi.domain.ShopProductVO">
+		<![CDATA[
+			select * from (select 
+            	  rownum rn, 
+            	  product_idx, 
+            	  product_name, 
+            	  product_price, 
+            	  product_regdate, 
+            	  product_desc, 
+            	  product_option1, 
+            	  product_option2,
+            	  product_option_price1,
+            	  product_option_price2,
+            	  product_img,
+            	  product_category_idx
+			      from product
+        		  where rownum <= #{pageNum} * #{amount} and 
+        		  product_category_idx = #{category_idx})
+			where rn > (#{pageNum} - 1) * #{amount}
+		]]> 
+	</select>
+
+	<select id="getTotalCount_list_by_category_with_paging" resultType="int">
+		select count(*) from
+		product where product_category_idx = #{category_idx}
+	</select>
+
+
+	<!-- 상품 상세보기 -->
+	<select id="detailView"
+		parameterType="com.jachmi.domain.ShopProductVO"
+		resultType="com.jachmi.domain.ShopProductVO">
+		select * from product where product_idx = #{product_idx}
+	</select>
+
+	<!--리뷰 등록시 작성자 아이디 가져오기 -->
+	<select id="getReviewId" resultType="com.jachmi.domain.MemberVO">
+		SELECT id from member where id = #{id}
+	</select>
+	<!--카테고리 명 가져오기-->
+	<select id="getCategoryName" resultType="com.jachmi.domain.ProductCategoryVO">
+		SELECT * FROM category WHERE product_category_idx = #{product_category_idx}
+	</select>
+
+</mapper>

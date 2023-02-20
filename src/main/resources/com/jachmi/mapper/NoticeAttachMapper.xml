@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper 
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.jachmi.mapper.NoticeAttachMapper">
+
+	<insert id="n_insert">
+		insert into tbl_attachntc(uuid, uploadPath, fileName, fileType, n_idx)
+		values(#{uuid}, #{uploadPath}, #{fileName}, #{fileType}, #{n_idx})
+	</insert>
+	
+	<delete id="n_delete">
+		delete from tbl_attachntc where uuid = #{uuid}
+	</delete>
+	
+	<select id="n_findByBno" resultType="com.jachmi.domain.NoticeAttachVO">
+		select * from tbl_attachntc where n_idx = #{n_idx}
+	</select>
+
+</mapper>

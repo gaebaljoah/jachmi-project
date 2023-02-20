@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+	
+<mapper namespace="com.jachmi.mapper.BoardMapper">
+	<!-- 페이징 처리한 전체 목록 -->
+	<select id="getListWithPaging" resultType="com.jachmi.domain.BoardVO">
+		<![CDATA[
+			select * 
+			from (
+				select /*+INDEX_DESC(tbl_p_board pk_p_board)*/
+				ROWNUM rn, A.*
+				FROM (SELECT * 
+						FROM tbl_p_board
+						]]>
+						WHERE 1=1
+					<include refid="criteria"></include>
+					<include refid="category"></include>
+					<![CDATA[
+					ORDER BY b_idx DESC)A
+					)
+				WHERE rn > (#{pageNum} - 1) * #{amount} AND rn <= #{pageNum} * #{amount}
+		]]>	
+	</select>
+	
+	<select id="getTotalCount" resultType="int">
+		select count(*) from tbl_p_board where 1=1
+		<include refid="criteria"></include>
+		<include refid="category"></include>
+	</select>	
+	
+	<sql id="criteria">
+		<if test="keyword != null and keyword != ''">
+			<if test="type == 'title'">and b_title like '%'||#{keyword}||'%'</if>
+			<if test="type == 'writer'">and b_writer like '%'||#{keyword}||'%'</if>
+		</if>
+	</sql>
+	
+	<sql id="category">
+		<if test="b_category != null">
+			<if test="b_category == '자유게시판'">and b_category = #{b_category}</if>
+			<if test="b_category == '모임'">and b_category = #{b_category}</if>
+			<if test="b_category == 'QnA'">and b_category = #{b_category}</if>
+		</if>
+	</sql>
+	
+	
+	<!-- 데이터 한개 가져오기 -->
+	<select id="get" resultType="com.jachmi.domain.BoardVO">
+		select * from tbl_p_board where b_idx = #{b_idx}
+	</select>
+	
+	<!-- 데이터 삽입 -->
+	<insert id="insert" parameterType="com.jachmi.domain.BoardVO">
+		insert into tbl_p_board(b_idx, b_writer, b_category, b_title, b_content, b_date)
+		values(
+    	tbl_p_board_seq.nextval, #{b_writer}, #{b_category}, #{b_title}, #{b_content}, sysdate)
+	</insert>
+	
+	<!-- 데이터 수정 -->
+	<update id="update"	parameterType="com.jachmi.domain.BoardVO">
+		update tbl_p_board
+		set
+			b_title = #{b_title},
+			b_content = #{b_content}
+		where
+			b_idx = #{b_idx}
+	</update>
+	
+	<!-- 데이터 삭제 -->
+	<delete id="delete" parameterType="com.jachmi.domain.BoardVO">
+		delete from tbl_p_board where b_idx = #{b_idx}
+	</delete>
+	
+	<!-- 댓글수 증가 -->
+	<update id="updateReplyCnt">
+		update tbl_p_board set b_replycnt = b_replycnt + #{amount} where b_idx= #{b_idx}
+	</update>
+	
+	<!-- b_idx의 가장 최근것을 가지고 오기 위함(첨부파일관련) -->
+	<select id="getB_idx" resultType="long">
+		select b_idx from
+		(select b_idx from tbl_p_board order by b_idx desc)
+		where rownum=1
+	</select>
+	
+	<!-- 조회수 -->
+	<update id="updateHit" parameterType="long">
+		update tbl_p_board set b_cnt = b_cnt+1 where b_idx=#{b_idx}
+	</update>
+	
+	
+	
+	<select id="getInfo" resultType="com.jachmi.domain.BoardVO">
+<!-- 		select * from tbl_p_board left outer join member  -->
+<!-- 		on b_writer = id  -->
+<!-- 		where b_writer = #{b_writer} -->
+
+		select * from tbl_p_board where b_writer = (select id from member where id=#{id})
+	</select>
+	
+</mapper>

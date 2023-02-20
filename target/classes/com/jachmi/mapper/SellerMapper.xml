@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper 
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.jachmi.mapper.SellerMapper">
+
+	<select id="getList" resultType="com.jachmi.domain.SellerVO">
+		<![CDATA[
+			select * from seller where s_num > 0
+		]]> 
+	</select> 
+	
+	<select id="getListWithPaging" resultType="com.jachmi.domain.SellerVO">
+		<![CDATA[
+		select *
+		from
+		(select	/*+index_desc(seller pk_seller) */
+		rownum rn, id, s_num,s_title,s_person,s_price,s_contents,s_startday,s_endday,s_category,replyCnt,s_location
+		from seller
+		where rownum <= ${pageNum} * ${amount} 
+		
+		]]>
+		<choose>
+		<when test="keyword !=null">
+			 and s_title like '%'||#{keyword}||'%'
+		</when>
+		
+		<when test="category !=null">
+			 and s_category like '%'||#{category}||'%'
+		</when>
+		
+		</choose>
+		
+		
+	<![CDATA[
+			)	
+		where rn > (#{pageNum} - 1 ) * #{amount}
+		]]>
+	</select>
+	
+	
+	<select id="getTotalConut" resultType="int">
+		select count(*) from seller
+		
+		<choose>
+		<when test="keyword !=null">
+			 where s_title like '%'||#{keyword}||'%'
+		</when>
+		
+		<when test="category !=null">
+			 where s_category like '%'||#{category}||'%'
+		</when>
+		
+		</choose>
+		
+	</select>
+	
+	<insert id="insert" parameterType="com.jachmi.domain.SellerVO">	
+		 insert into seller(s_num,s_day,id,s_category,s_title,s_person,s_price,s_location,s_link,s_startday,s_endday,s_contents)
+		values(seq_board.nextval,sysdate,#{id},#{s_category},#{s_title},#{s_person},#{s_price},#{s_location},#{s_link},#{s_startday},#{s_endday},#{s_contents})
+	</insert>
+	
+	<select id="read" resultType="com.jachmi.domain.SellerVO">
+		select * from seller where s_num=#{s_num}
+	</select>
+	
+	<update id="update">
+		update seller set s_price=#{s_price},s_location=#{s_location},s_startday=#{s_startday},s_endday=#{s_endday},s_contents=#{s_contents} where s_num = #{s_num}
+	</update>
+	
+	<delete id="delete">
+		delete from seller where s_num=#{s_num}
+	</delete>	
+	
+	<select id="category" resultType="com.jachmi.domain.SellerVO">
+		select * from seller where s_category=#{s_category}
+	</select>
+	
+	<select id="getTotalConutid" resultType="int">
+		select count(*) from seller where id=#{id}
+	</select>
+	
+	<select id="getTotalid" resultType="com.jachmi.domain.SellerVO">
+		<![CDATA[
+		select *
+		from
+		(select	/*+index_desc(seller pk_seller) */
+		rownum rn, id, s_num,s_title,s_person,s_price,s_contents,s_startday,s_endday,s_category
+		from seller
+		where rownum <= ${pageNum} * ${amount} 
+		]]>
+			and id=#{id}
+	
+	<![CDATA[
+			)	
+		where rn > (#{pageNum} - 1 ) * #{amount}
+		]]>
+	</select>
+	
+	<update id="updateReplyCnt">
+    	update seller
+    	set replycnt = replycnt + #{amount} 
+    	where s_num = #{s_num}
+  	</update>  
+</mapper>

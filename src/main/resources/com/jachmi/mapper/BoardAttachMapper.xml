@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+	
+<mapper namespace="com.jachmi.mapper.BoardAttachMapper">
+	
+	<insert id="insert">
+		insert into tbl_b_attach (b_uuid, b_uploadPath, b_fileName, b_fileType, b_idx)
+		values(#{b_uuid}, #{b_uploadPath}, #{b_fileName}, #{b_fileType}, #{b_idx})
+	</insert>
+	
+	<delete id="delete">
+		delete from tbl_b_attach where b_uuid = #{b_uuid}
+	</delete>
+	
+	<select id="findByB_idx" resultType="com.jachmi.domain.BoardAttachVO">
+		select * from tbl_b_attach where b_idx = #{b_idx}
+	</select>
+	
+	<delete id="deleteAll">
+		delete from tbl_b_attach where b_idx=#{b_idx}
+	</delete>
+	
+</mapper>

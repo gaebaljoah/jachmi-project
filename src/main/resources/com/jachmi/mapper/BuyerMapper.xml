@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper 
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.jachmi.mapper.BuyerMapper">
+
+ 	<insert id="insertb" parameterType="com.jachmi.domain.BuyerVO">	
+		 insert into buyer(b_num,s_num,id,b_day,phone,b_money,b_location,b_equests,s_title)
+		values(buyer_seq.nextval,#{s_num},#{id},sysdate,#{phone},#{b_money},#{b_location},#{b_equests},#{s_title})
+	</insert> 
+
+	<select id="getList" resultType="com.jachmi.domain.BuyerVO">
+		SELECT * FROM BUYER
+	</select>
+	
+	<select id="read" resultType="com.jachmi.domain.BuyerVO">
+		select * from buyer where b_num=#{b_num}
+	</select>
+	
+	<update id="bmodify">
+	 	update buyer set phone=#{phone}, b_money=#{b_money},b_location=#{b_location}, b_equests= #{b_equests} where b_num = #{b_num}
+	</update>
+	
+	<delete id="delete">
+		delete from buyer where b_num=#{b_num}
+	</delete>
+	
+	<select id="guestList" resultType="com.jachmi.domain.BuyerVO">
+		SELECT * FROM BUYER where s_num=#{s_num}
+	</select>
+	
+	
+	<select id="totalCountid" resultType="int">
+		select count(*) from buyer where id=#{id}
+	</select>
+	
+	<select id="totalid" resultType="com.jachmi.domain.BuyerVO">
+		<![CDATA[
+		select *
+		from
+		(select	/*+index_desc(buyer pk_buyer) */
+		rownum rn, id,s_num,b_num,b_day,phone,b_money,b_location,b_equests,s_title
+		from buyer
+		where rownum <= ${pageNum} * ${amount} 
+		]]>
+			and id=#{id}
+	<![CDATA[
+			)	
+		where rn > (#{pageNum} - 1 ) * #{amount}
+		]]>
+		
+	</select>
+	
+	<select id="countsnum" resultType="com.jachmi.domain.BuyerVO">
+		SELECT COUNT(*) FROM BUYER where s_num=#{s_num}
+	</select>
+	
+	
+	
+
+
+</mapper>

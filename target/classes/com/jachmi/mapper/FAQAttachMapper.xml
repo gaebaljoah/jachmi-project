@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper 
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.jachmi.mapper.FAQAttachMapper">
+
+	<insert id="faq_insert">
+		insert into tbl_attachfaq(uuid, uploadPath, fileName, fileType, faq_idx)
+		values(#{uuid}, #{uploadPath}, #{fileName}, #{fileType}, #{faq_idx})
+	</insert>
+	
+	<delete id="faq_delete">
+		delete from tbl_attachfaq where uuid = #{uuid}
+	</delete>
+	
+	<select id="n_findByBno" resultType="com.jachmi.domain.FAQAttachVO">
+		select * from tbl_attachfaq where faq_idx = #{faq_idx}
+	</select>
+
+</mapper>

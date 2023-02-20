@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.jachmi.mapper.ProductReviewMapper">
+	
+	<!-- 리뷰 등록하기 -->
+	<insert id="reviewInsert">
+		INSERT INTO review
+		VALUES(
+		seq_review.nextval,
+		#{review_title},
+		#{review_content},
+		#{review_img},
+		sysdate,
+		#{product_idx},
+		#{id})
+	</insert>
+	<!-- 상품 리뷰 리스트보기 -->
+	<select id="getReviewListWithPaging" resultType="com.jachmi.domain.ProductReviewVO">
+		<![CDATA[
+			select * from (select 
+            	  rownum rn, 
+            	  review_idx,
+            	  review_title,
+                  review_content, 
+            	  review_img, 
+            	  review_regdate, 
+            	  product_idx, 
+            	  id 
+			      from review
+        		  where rownum <= #{pageNum} * #{amount} and 
+        		  product_idx = #{product_idx})
+			where rn > (#{pageNum} - 1) * #{amount}
+		]]> 
+	</select>
+		<select id="getReviewTotalCount" resultType="int">
+		select count(*) from review where product_idx = #{product_idx}
+	</select>
+	
+</mapper>

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+	
+<mapper namespace="com.jachmi.mapper.MessageMapper">
+	
+	<!-- 쪽지 목록 -->
+	<select id="getList" resultType="com.jachmi.domain.MessageVO">
+		select * from tbl_message where m_receiver = (select id from member where id=#{id}) order by m_idx desc
+	</select>
+	
+	<!-- 쪽지 삽입 -->
+	<insert id="insert">
+		insert into tbl_message values(
+	    tbl_message_seq.nextval, #{m_id}, #{m_receiver}, #{m_content}, sysdate, 0)
+	</insert>
+	
+	<!-- 쪽지 보기 -->
+	<select id="get" resultType="com.jachmi.domain.MessageVO">
+		select * from tbl_message where m_idx = #{m_idx}
+	</select>
+	
+	<!-- 쪽지 삭제 -->
+	<delete id="delete">
+		delete from tbl_message where m_idx = #{m_idx}
+	</delete>
+	
+</mapper>

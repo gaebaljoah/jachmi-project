@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper 
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.jachmi.mapper.FAQMapper">	
+	<select id="faq_getListWithPaging" resultType="com.jachmi.domain.FAQVO">
+		<![CDATA[
+			select faq_idx, faq_title, faq_date, faq_content, faq_category
+			from
+				(select /*+index_desc(tbl_faq pk_faq) */
+				rownum rn, faq_idx, faq_title, faq_date, faq_content, faq_category 
+				from tbl_faq
+				where rownum <= #{pageNum} * #{amount} )
+			where rn > (#{pageNum} -1 ) * #{amount}
+		]]>
+	</select>
+
+	<select id="faq_getTotalCount" resultType="int">
+		select count(*) from tbl_faq
+	</select>	
+	
+	<select id="faq_getSelTotalCount" resultType="int">
+		select count(*) from tbl_faq where faq_category = #{faq_category}
+	</select>	
+	
+	<insert id="faq_insert">
+		insert into tbl_faq values (seq_faq.nextval, #{faq_title}, #{faq_content}, sysdate, #{faq_category}, 'admin00')
+	</insert>
+
+	<update id="faq_update">
+		update tbl_faq set faq_title = #{faq_title}, faq_content = #{faq_content} where faq_idx = #{faq_idx}
+	</update>
+	
+	<delete id="faq_delete">
+		delete from tbl_faq where faq_idx = #{faq_idx}
+	</delete>
+
+	<select id="getFaq_idx" resultType="int">
+		SELECT faq_idx
+		FROM (SELECT faq_idx FROM tbl_faq ORDER BY faq_idx DESC)
+		WHERE ROWNUM=1		
+	</select>	
+	<select id="selFaq_category" resultType="com.jachmi.domain.FAQVO">
+		<![CDATA[
+			select faq_idx, faq_title, faq_date, faq_content, faq_category
+			from
+				(select /*+index_desc(tbl_faq pk_faq) */
+				rownum rn, faq_idx, faq_title, faq_date, faq_content, faq_category 
+				from tbl_faq
+				where rownum <= #{pageNum} * #{amount} and faq_category = #{faq_category})
+			where rn > (#{pageNum} -1 ) * #{amount} and faq_category = #{faq_category}
+ 		]]>
+	</select>	
+	
+	<select id="faq_read" resultType="com.jachmi.domain.FAQVO">
+		select * from tbl_faq where faq_idx = #{faq_idx}
+	</select>
+</mapper>

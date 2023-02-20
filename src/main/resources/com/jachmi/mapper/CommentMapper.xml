@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+	
+<mapper namespace="com.jachmi.mapper.CommentMapper">
+	
+	<!-- 댓글 목록 -->
+	<select id="getList" resultType="com.jachmi.domain.CommentVO">
+		select * from tbl_comment where b_idx=#{b_idx} order by c_idx desc
+	</select>
+	
+	<!-- 댓글 읽기 -->
+	<select id="get" resultType="com.jachmi.domain.CommentVO">
+		select * from tbl_comment where c_idx=#{c_idx}
+	</select>
+	
+	<!-- 댓글 삽입 -->
+	<insert id="insert">
+		insert into tbl_comment(c_idx, b_idx, c_writer, c_content, c_date)
+		values(tbl_comment_seq.nextval, #{b_idx}, #{c_writer}, #{c_content}, sysdate)
+	</insert>
+	
+	<!-- 댓글 수정 -->
+	<update id="update" parameterType="com.jachmi.domain.CommentVO">
+		update tbl_comment
+		set
+			c_content=#{c_content}
+		where 
+			c_idx=#{c_idx}
+	</update>
+	
+	<!-- 댓글 삭제 -->
+	<delete id="delete">
+		delete from tbl_comment where c_idx=#{c_idx}
+	</delete>
+	
+	<delete id="deleteAll">
+		delete from tbl_comment where b_idx=#{b_idx}
+	</delete>
+</mapper>
